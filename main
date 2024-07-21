@@ -1,8 +1,10 @@
 #include <iostream>
 #include <time.h>
 #include <string>
+#include <vector>
 
 using namespace std;
+
 
 int chislo(string var)
 {
@@ -42,6 +44,44 @@ int nul(string var)
     return c;
 }
 
+void Func(int k0, int k1, int ar[][9], string s[][9], int rows, int cols) {
+    int d = 0;
+    for (int i = k0 - 1; i < k0 + 2; i++)
+    {
+        for (int j = k1 - 1; j < k1 + 2; j++)
+        {
+            if ((i >= 0) and (j >= 0))
+            {
+                if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
+                {
+                    if (ar[i][j] >= 0)
+                    {
+                        d++;
+                    }
+                }
+            }
+        }
+    }
+    s[k0][k1] = "[" + to_string(d) + "]";
+    if (d == 0)
+    {
+        for (int i = k0 - 1; i < k0 + 2; i++)
+        {
+            for (int j = k1 - 1; j < k1 + 2; j++)
+            {
+                if ((i >= 0) and (j >= 0))
+                {
+                    if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
+                    {
+                        Func(i, j, ar, s, rows, cols);
+                    }
+                }
+            }
+        }
+    }
+    d = 0;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "rus");
@@ -50,7 +90,7 @@ int main()
 	int const COL = 9;
     bool del = true;
     bool nomines = false;
-	int arr[ROW][COL];
+    int arr[ROW][COL];
     string saper[ROW][COL];
     string chose;
     string n;
@@ -68,7 +108,7 @@ int main()
 		cout << "|1. Да          |" << endl;
 		cout << "|2. Нет         |" << endl;
 		cout << "|---------------|" << endl;
-		cin >> otvet;
+        cin >> otvet;
 		if (otvet == "1")
 		{
             for (int i = 0; i < ROW; i++)
@@ -123,32 +163,13 @@ int main()
                 for (int j = 0; j < COL; j++)
                 {
                     saper[i][j] = "[]";
-                }
-            }
-
-            for (int i = 0; i < ROW; i++)
-            {
-                for (int j = 0; j < COL; j++)
-                {
                     cout << saper[i][j] << "\t";
                     if (j == COL - 1)
                     {
                         cout << endl;
                     }
                 }
-            }
-
-            for (int i = 0; i < ROW; i++)
-            {
-                for (int j = 0; j < COL; j++)
-                {
-                    cout << arr[i][j] << "\t";
-                    if (j == COL - 1)
-                    {
-                        cout << endl;
-                    }
                 }
-            }
 
             while (true)
             {
@@ -175,53 +196,10 @@ int main()
                             saper[n0][n1] = "[*]";
                             mina = true;
                         }
+
                         else
                         {
-                            for (int i = n0 - 1; i < n0 + 2; i++)
-                            {
-                                for (int j = n1 - 1; j < n1 + 2; j++)
-                                {
-                                    if ((i >= 0) and (j >= 0))
-                                    {
-                                        if (arr[i][j] >= 0)
-                                        {
-                                            c++;
-                                        }
-                                    }
-                                }
-                            }
-                            if (c == 0)
-                            {
-                                for (int i = n0 - 1; i < n0 + 2; i++)
-                                {
-                                    for (int j = n1 - 1; j < n1 + 2; j++)
-                                    {
-                                        if ((i >= 0) and (j >= 0))
-                                        {
-                                            for (int k = i - 1; k < i + 2; k++)
-                                            {
-                                                for (int g = j - 1; g < j + 2; g++)
-                                                {
-                                                    if ((k >= 0) and (g >= 0))
-                                                    {
-                                                        if (arr[k][g] >= 0)
-                                                        {
-                                                            c++;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            saper[i][j] = "[" + to_string(c) + "]";
-                                            c = 0;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                saper[n0][n1] = "[" + to_string(c) + "]";
-                                c = 0;
-                            }
+                            Func(n0, n1, arr, saper, ROW, COL);
                         }
 
                         for (int i = 0; i < ROW; i++)
