@@ -44,13 +44,13 @@ int nul(string var)
     return c;
 }
 
-void Func(int k0, int k1, int ar[][9], string s[][9], int rows, int cols) {
+void Func(int k0, int k1, int ar[9][9], string s[9][9], int rows, int cols) {
     int d = 0;
     for (int i = k0 - 1; i < k0 + 2; i++)
     {
         for (int j = k1 - 1; j < k1 + 2; j++)
         {
-            if ((i >= 0) and (j >= 0))
+            if ((i > -1) and (i < 9) and (j > -1) and (j < 9))
             {
                 if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
                 {
@@ -69,7 +69,7 @@ void Func(int k0, int k1, int ar[][9], string s[][9], int rows, int cols) {
         {
             for (int j = k1 - 1; j < k1 + 2; j++)
             {
-                if ((i >= 0) and (j >= 0))
+                if ((i > -1) and (i < 9) and (j > -1) and (j < 9))
                 {
                     if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
                     {
@@ -89,7 +89,7 @@ int main()
 	int const ROW = 9;
 	int const COL = 9;
     bool del = true;
-    bool nomines = false;
+    bool bool_mc;
     int arr[ROW][COL];
     string saper[ROW][COL];
     string chose;
@@ -98,7 +98,7 @@ int main()
     string n1str;
     int n0;
     int n1;
-    int c = 0;
+    int mc = 0;
     bool mina = false;
 	srand(time(NULL));
 	while (true)
@@ -173,6 +173,8 @@ int main()
 
             while (true)
             {
+                mc = 0;
+                bool_mc = true;
                 cout << "|-----------------|" << endl;
                 cout << "|Выберите действие|" << endl;
                 cout << "|1. Вскопать      |" << endl;
@@ -196,27 +198,9 @@ int main()
                             saper[n0][n1] = "[*]";
                             mina = true;
                         }
-
                         else
                         {
                             Func(n0, n1, arr, saper, ROW, COL);
-                        }
-
-                        for (int i = 0; i < ROW; i++)
-                        {
-                            for (int j = 0; j < COL; j++)
-                            {
-                                cout << saper[i][j] << "\t";
-                                if (j == COL - 1)
-                                {
-                                    cout << endl;
-                                }
-                            }
-                        }
-                        if (mina == true)
-                        {
-                            mina = false;
-                            break;
                         }
                     }
                     else
@@ -236,27 +220,61 @@ int main()
                         n1 = stoi(n1str) - 1;
 
                         saper[n0][n1] = "[!]";
-
-                        for (int i = 0; i < ROW; i++)
-                        {
-                            for (int j = 0; j < COL; j++)
-                            {
-                                cout << saper[i][j] << "\t";
-                                if (j == COL - 1)
-                                {
-                                    cout << endl;
-                                }
-                            }
-                        }
                     }
                     else
                     {
                         cout << "Попробуй ещё раз!" << endl;
                     }
+
                 }
                 else
                 {
                     cout << "Попробуй ещё раз!" << endl;
+                }
+                for (int i = 0; i < ROW; i++)
+                {
+                    for (int j = 0; j < COL; j++)
+                    {
+                        if (saper[i][j] == "[!]")
+                        {
+                            mc++;
+                        }
+                    }
+                }
+                cout << "Осталось мин: " << 10 - mc << endl;
+                for (int i = 0; i < ROW; i++)
+                {
+                    for (int j = 0; j < COL; j++)
+                    {
+                        cout << saper[i][j] << "\t";
+                        if (j == COL - 1)
+                        {
+                            cout << endl;
+                        }
+                    }
+                }
+                if (mina == true)
+                {
+                    mina = false;
+                    break;
+                }
+                if (mc == 10)
+                {
+                    for (int i = 0; i < ROW; i++)
+                    {
+                        for (int j = 0; j < COL; j++)
+                        {
+                            if (saper[i][j] == "[]")
+                            {
+                                bool_mc = false;
+                            }
+                        }
+                    }
+                    if (bool_mc == true)
+                    {
+                        cout << "ПОБЕДА!!!" << endl;
+                        break;
+                    }
                 }
             }
 		}
