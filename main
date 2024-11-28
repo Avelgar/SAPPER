@@ -4,117 +4,120 @@
 
 using namespace std;
 
-
+//проверка строки на то состоит она только из цифр или нет и есть ли там нули
 int chislo(string var)
 {
-    int c = 0;
-    for (int i = 0; i < var.size(); i++)
-    {
-        if (isdigit(var[i]))
-        {
-            c = 1;
-        }
-        else
-        {
-            c = 0;
-            break;
-        }
-    }
-    return c;
-}
-
-int nul(string var)
-{
-    int c = 0;
     int a = 0;
+    //пробегаемся по строке
     for (int i = 0; i < var.size(); i++)
     {
         a = var[i] - '0';
-        if (a > 0)
+        //ищем не цифры и проверяем на то, есть ли 0
+        if (!isdigit(var[i]) or (a==0))
         {
-            c = 1;
-        }
-        else
-        {
-            c = 0;
-            break;
+            return false;
         }
     }
-    return c;
+    return true;
 }
 
 void Func(int k0, int k1, int ar[9][9], string s[9][9], int rows, int cols) {
-    int d = 0;
+    int d = 0; //счётчик мин
+    //по вертикали 3 клетки
     for (int i = k0 - 1; i < k0 + 2; i++)
     {
+        //по горизонтали 3 клетки
         for (int j = k1 - 1; j < k1 + 2; j++)
         {
+            //не выходим за пределы поля 9 на 9
             if ((i > -1) and (i < 9) and (j > -1) and (j < 9))
             {
+                //считаем только пустые клетки в которых может быть мина
                 if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
                 {
+                    //если какая-то из соседних клеток больше 0(мина)
                     if (ar[i][j] >= 0)
                     {
+                        //увеличиваем счётчик мин
                         d++;
                     }
                 }
             }
         }
     }
+    //заполняем клетку исходя из кол-ва мин рядом
     s[k0][k1] = "[" + to_string(d) + "]";
+    //если мин нет, то открываем все соседние клетки
     if (d == 0)
     {
+        //по вертикали 3 клетки
         for (int i = k0 - 1; i < k0 + 2; i++)
         {
+            //по горизонтали 3 клетки
             for (int j = k1 - 1; j < k1 + 2; j++)
             {
+                //не выходим за пределы поля 9 на 9
                 if ((i > -1) and (i < 9) and (j > -1) and (j < 9))
                 {
+                    //считаем только пустые клетки в которых может быть мина
                     if ((s[i][j] == "[]") or (s[i][j] == "[!]"))
                     {
+                        //ищем мины для каждой клетки вокруг
                         Func(i, j, ar, s, rows, cols);
                     }
                 }
             }
         }
+        //обнуляем счётчик мин
+        d = 0;
     }
-    d = 0;
+    //если мины есть, завершаем работу программы
+    else 
+    {
+        return;
+    }
 }
 
 int main()
 {
-	setlocale(LC_ALL, "rus");
-	string otvet;
-	int const ROW = 9;
-	int const COL = 9;
-    bool del = true;
-    bool bool_mc;
-    int arr[ROW][COL];
-    string saper[ROW][COL];
-    string chose;
-    string n;
-    string n0str;
-    string n1str;
-    int n0;
-    int n1;
-    int mc = 0;
-    bool mina = false;
-	srand(time(NULL));
-	while (true)
+	//setlocale(LC_ALL, "rus");
+	string otvet; //ввод пользователя
+	int const ROW = 9; //строки матрицы
+	int const COL = 9; //колонки матрицы
+    bool del = true; //буловая переменная для правильного заполнения матрицы рандомными числами
+    bool bool_mc; //буловая перменная, которая проверяет, что все мины отмечены, а поля открыты
+    int arr[ROW][COL]; //массив с циферками, который не видит пользователь
+    string saper[ROW][COL]; //массив с пустыми полями, который видит пользователь
+    string chose; //выбор действия пользователем(в самой игре)
+    string n; //номер элемента, который вводит пользователь
+    string n0str; //первый символ элемента в виде строки
+    string n1str; //второй символ элемента в виде строки
+    int n0; //первый символ элемента в виде числа
+    int n1; //второй символ элемента в виде числа
+    int mc = 0; //счетчик для мин
+    bool mina = false; //буловая переменная, которая меняется на true, если пользователь наткнулся на мину
+	srand(time(NULL)); //для рандомной генерации чисел
+	while (true) //цикл для генерации чисел
 	{
+        //меню в начле игры
 		cout << "|---------------|" << endl;
 		cout << "|Сыграем в игру?|" << endl;
 		cout << "|1. Да          |" << endl;
 		cout << "|2. Нет         |" << endl;
 		cout << "|---------------|" << endl;
         cin >> otvet;
+        //ответ да
 		if (otvet == "1")
 		{
+            //проходимся по матрице по вертикали
             for (int i = 0; i < ROW; i++)
             {
+                //проходимся по матрице по горизонтали
                 for (int j = 0; j < COL; j++)
                 {
+                    //записываем в матрицу с цифрами рандомное число
                     arr[i][j] = rand() % 81 - 71;
+                    //обновление
                     for (int k = 0; k < ROW; k++)
                     {
                         for (int g = 0; g < COL; g++)
@@ -148,6 +151,7 @@ int main()
                             }
 
                         }
+                        //обнуляем значение
                         if (del == false)
                         {
                             del = true;
@@ -187,7 +191,7 @@ int main()
                 {
                     cout << "Введите номер элемента" << endl;
                     cin >> n;
-                    if ((size(n) == 2) and (chislo(n) == 1) and (nul(n) == 1))
+                    if ((size(n) == 2) and (chislo(n) == true))
                     {
                         n0str = n[0];
                         n1str = n[1];
@@ -214,7 +218,7 @@ int main()
                 {
                     cout << "Введите номер элемента" << endl;
                     cin >> n;
-                    if ((size(n) == 2) and (chislo(n) == 1) and (nul(n) == 1))
+                    if ((size(n) == 2) and (chislo(n) == true))
                     {
                         n0str = n[0];
                         n1str = n[1];
@@ -233,6 +237,7 @@ int main()
                 {
                     cout << "Попробуй ещё раз!" << endl;
                 }
+
                 for (int i = 0; i < ROW; i++)
                 {
                     for (int j = 0; j < COL; j++)
@@ -243,13 +248,17 @@ int main()
                         }
                     }
                 }
+
                 cout << "Осталось мин: " << 10 - mc << endl;
                 cout << "\t";
+
                 for (int i = 1; i < ROW + 1; i++)
                 {
                     cout << i << "\t";
                 }
+
                 cout << endl;
+
                 for (int i = 0; i < ROW; ++i) 
                 {
                     cout << i + 1 << "\t";
@@ -259,11 +268,13 @@ int main()
                     }
                     cout << endl;
                 }
+
                 if (mina == true)
                 {
                     mina = false;
                     break;
                 }
+
                 if (mc == 10)
                 {
                     for (int i = 0; i < ROW; i++)
@@ -282,6 +293,7 @@ int main()
                         break;
                     }
                 }
+
             }
 		}
 		else if (otvet == "2")
